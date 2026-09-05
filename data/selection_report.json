@@ -1,0 +1,23 @@
+{
+  "n_s2_products_used": 5,
+  "chosen_s2_products": [
+    "S2A_MSIL2A_20170613T101031_N9999_R022_T33UUP",
+    "S2A_MSIL2A_20170613T101031_N9999_R022_T34VER",
+    "S2A_MSIL2A_20170617T113321_N9999_R080_T29UPU",
+    "S2A_MSIL2A_20170701T093031_N9999_R136_T35VPK",
+    "S2A_MSIL2A_20170704T112111_N9999_R037_T29SND"
+  ],
+  "n_candidate_patches": 13932,
+  "n_classes_candidate": 19,
+  "n_s1_products_needed": 10,
+  "max_s1_rank_needed": 9,
+  "n_s1_products_total": 312,
+  "subset_size": 4200,
+  "subset_split_counts": {
+    "train": 2040,
+    "validation": 1097,
+    "test": 1063
+  },
+  "n_classes_subset": 19,
+  "all_19_classes_present": true
+}

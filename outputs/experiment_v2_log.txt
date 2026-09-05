@@ -1,0 +1,69 @@
+train=2040 val=1097 test=1063 classes=19
+Excluded from macro_f1_valid (3 classes, 0 support in some split): ['Beaches, dunes, sands', 'Coastal wetlands', 'Marine waters']
+Class pos_weight range: min=1.00 max=15.00
+
+=== [Round 2] Training Model A2 (optical only, clean, weighted loss) ===
+[A2] epoch 1/10 train_loss=0.7443 val_macro_f1_valid=0.5268 val_microF1=0.5583 val_hamming_acc=0.7903 (110s)
+[A2] epoch 2/10 train_loss=0.6531 val_macro_f1_valid=0.5382 val_microF1=0.5733 val_hamming_acc=0.8110 (77s)
+[A2] epoch 3/10 train_loss=0.6280 val_macro_f1_valid=0.5482 val_microF1=0.5717 val_hamming_acc=0.8070 (78s)
+[A2] epoch 4/10 train_loss=0.6105 val_macro_f1_valid=0.5664 val_microF1=0.6071 val_hamming_acc=0.8317 (78s)
+[A2] epoch 5/10 train_loss=0.5814 val_macro_f1_valid=0.5983 val_microF1=0.6392 val_hamming_acc=0.8468 (77s)
+[A2] epoch 6/10 train_loss=0.5644 val_macro_f1_valid=0.6010 val_microF1=0.6365 val_hamming_acc=0.8500 (77s)
+[A2] epoch 7/10 train_loss=0.5512 val_macro_f1_valid=0.6014 val_microF1=0.6402 val_hamming_acc=0.8556 (77s)
+[A2] epoch 8/10 train_loss=0.5362 val_macro_f1_valid=0.6140 val_microF1=0.6532 val_hamming_acc=0.8606 (77s)
+[A2] epoch 9/10 train_loss=0.5218 val_macro_f1_valid=0.6136 val_microF1=0.6536 val_hamming_acc=0.8606 (79s)
+[A2] epoch 10/10 train_loss=0.5130 val_macro_f1_valid=0.6144 val_microF1=0.6584 val_hamming_acc=0.8630 (77s)
+
+=== [Round 2] Training Model C-early (concat fusion, coverage~U[0,0.75], weighted) ===
+[C-early] epoch 1/10 train_loss=0.7717 val_macro_f1_valid=0.5331 val_microF1=0.5730 val_hamming_acc=0.8037 (153s)
+[C-early] epoch 2/10 train_loss=0.6789 val_macro_f1_valid=0.5396 val_microF1=0.5788 val_hamming_acc=0.8115 (82s)
+[C-early] epoch 3/10 train_loss=0.6505 val_macro_f1_valid=0.5544 val_microF1=0.5767 val_hamming_acc=0.8035 (79s)
+[C-early] epoch 4/10 train_loss=0.6302 val_macro_f1_valid=0.5536 val_microF1=0.5818 val_hamming_acc=0.8060 (80s)
+[C-early] epoch 5/10 train_loss=0.6092 val_macro_f1_valid=0.5653 val_microF1=0.6156 val_hamming_acc=0.8341 (78s)
+[C-early] epoch 6/10 train_loss=0.5984 val_macro_f1_valid=0.5664 val_microF1=0.6082 val_hamming_acc=0.8330 (81s)
+[C-early] epoch 7/10 train_loss=0.5888 val_macro_f1_valid=0.5552 val_microF1=0.6010 val_hamming_acc=0.8256 (77s)
+[C-early] epoch 8/10 train_loss=0.5769 val_macro_f1_valid=0.5728 val_microF1=0.6258 val_hamming_acc=0.8435 (78s)
+[C-early] epoch 9/10 train_loss=0.5584 val_macro_f1_valid=0.5758 val_microF1=0.6269 val_hamming_acc=0.8426 (80s)
+[C-early] epoch 10/10 train_loss=0.5567 val_macro_f1_valid=0.5739 val_microF1=0.6226 val_hamming_acc=0.8408 (84s)
+
+=== [Round 2] Training Model C-late (two-branch late fusion, coverage~U[0,0.75]) ===
+[C-late] epoch 1/10 train_loss=0.8416 val_macro_f1_valid=0.4983 val_microF1=0.5344 val_hamming_acc=0.7776 (125s)
+[C-late] epoch 2/10 train_loss=0.7092 val_macro_f1_valid=0.5244 val_microF1=0.5657 val_hamming_acc=0.7910 (123s)
+[C-late] epoch 3/10 train_loss=0.6836 val_macro_f1_valid=0.5379 val_microF1=0.5792 val_hamming_acc=0.8157 (124s)
+[C-late] epoch 4/10 train_loss=0.6585 val_macro_f1_valid=0.5459 val_microF1=0.5857 val_hamming_acc=0.8105 (125s)
+[C-late] epoch 5/10 train_loss=0.6429 val_macro_f1_valid=0.5531 val_microF1=0.6017 val_hamming_acc=0.8328 (125s)
+[C-late] epoch 6/10 train_loss=0.6182 val_macro_f1_valid=0.5630 val_microF1=0.6073 val_hamming_acc=0.8258 (124s)
+[C-late] epoch 7/10 train_loss=0.6162 val_macro_f1_valid=0.5561 val_microF1=0.6044 val_hamming_acc=0.8287 (124s)
+[C-late] epoch 8/10 train_loss=0.6102 val_macro_f1_valid=0.5612 val_microF1=0.6059 val_hamming_acc=0.8301 (124s)
+[C-late] epoch 9/10 train_loss=0.6015 val_macro_f1_valid=0.5572 val_microF1=0.6045 val_hamming_acc=0.8261 (123s)
+[C-late] epoch 10/10 train_loss=0.5897 val_macro_f1_valid=0.5674 val_microF1=0.6117 val_hamming_acc=0.8294 (125s)
+
+=== [Round 2] Training Model C-fixed50 (concat fusion, coverage FIXED @ 50%) ===
+[C-fixed50] epoch 1/10 train_loss=0.7775 val_macro_f1_valid=0.5193 val_microF1=0.5626 val_hamming_acc=0.8083 (80s)
+[C-fixed50] epoch 2/10 train_loss=0.6782 val_macro_f1_valid=0.5355 val_microF1=0.5635 val_hamming_acc=0.8089 (78s)
+[C-fixed50] epoch 3/10 train_loss=0.6373 val_macro_f1_valid=0.5503 val_microF1=0.5862 val_hamming_acc=0.8202 (77s)
+[C-fixed50] epoch 4/10 train_loss=0.6197 val_macro_f1_valid=0.5412 val_microF1=0.5970 val_hamming_acc=0.8286 (78s)
+[C-fixed50] epoch 5/10 train_loss=0.6171 val_macro_f1_valid=0.5519 val_microF1=0.5997 val_hamming_acc=0.8315 (78s)
+[C-fixed50] epoch 6/10 train_loss=0.5927 val_macro_f1_valid=0.5685 val_microF1=0.6179 val_hamming_acc=0.8393 (78s)
+[C-fixed50] epoch 7/10 train_loss=0.5790 val_macro_f1_valid=0.5739 val_microF1=0.6253 val_hamming_acc=0.8418 (78s)
+[C-fixed50] epoch 8/10 train_loss=0.5699 val_macro_f1_valid=0.5736 val_microF1=0.6181 val_hamming_acc=0.8354 (80s)
+[C-fixed50] epoch 9/10 train_loss=0.5584 val_macro_f1_valid=0.5752 val_microF1=0.6244 val_hamming_acc=0.8400 (80s)
+[C-fixed50] epoch 10/10 train_loss=0.5583 val_macro_f1_valid=0.5759 val_microF1=0.6268 val_hamming_acc=0.8416 (80s)
+
+=== [Round 2] Evaluating A2/B/C-early/C-late/C-fixed50 across coverage levels ===
+coverage=0.00  B: f1_valid=0.5510  |  C-early: f1_valid=0.5164  |  C-late: f1_valid=0.5181  |  C-fixed50: f1_valid=0.5108
+coverage=0.25  B: f1_valid=0.5386  |  C-early: f1_valid=0.5216  |  C-late: f1_valid=0.5158  |  C-fixed50: f1_valid=0.5248
+coverage=0.50  B: f1_valid=0.4950  |  C-early: f1_valid=0.5204  |  C-late: f1_valid=0.5158  |  C-fixed50: f1_valid=0.5261
+coverage=0.75  B: f1_valid=0.4014  |  C-early: f1_valid=0.5039  |  C-late: f1_valid=0.5034  |  C-fixed50: f1_valid=0.5137
+
+Saved outputs/metrics/results_v2.csv
+Best C variant under degradation (mean macro_f1_valid, coverage>0): {'C-early': np.float64(0.5153220871175191), 'C-late': np.float64(0.5116805463650455), 'C-fixed50': np.float64(0.5215299974208706)} -> best=C-fixed50
+
+=== [Round 2] Calibration analysis (B and C-fixed50, @ 50% coverage) ===
+Fitted temperature: T_B=0.802  T_C-fixed50=0.899
+B:  ECE before=0.0335  after=0.0086  (T=0.802)
+C-fixed50: ECE before=0.0236  after=0.0168  (T=0.899)
+[v2, C-fixed50] At 50% coverage: SAR helps n=45; SAR hurts n=65; both fail n=912
+Saved outputs/figures/v2_qualitative_cases_50pct.png (best C = C-fixed50)
+
+[Round 2] Done. See outputs/figures/v2_*.png, outputs/metrics/*_v2*, outputs/checkpoints/*_v2.pt.

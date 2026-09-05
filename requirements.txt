@@ -1,0 +1,11 @@
+numpy
+pandas
+pyarrow
+scikit-learn
+matplotlib
+pillow
+tifffile
+torch
+torchvision
+zstandard
+requests

@@ -1,0 +1,14 @@
+{
+  "best_c_name": "C-fixed50",
+  "c_scores_mean_valid_f1_under_degradation": {
+    "C-early": 0.5153220871175191,
+    "C-late": 0.5116805463650455,
+    "C-fixed50": 0.5215299974208706
+  },
+  "T_B": 0.8016285300254822,
+  "T_C-fixed50": 0.8992274403572083,
+  "ece_B_before": 0.03353660354674697,
+  "ece_B_after": 0.008610018870733368,
+  "ece_C-fixed50_before": 0.023566690905823546,
+  "ece_C-fixed50_after": 0.016755299544094784
+}

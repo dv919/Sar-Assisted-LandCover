@@ -1,0 +1,15 @@
+# Raw imagery extracted from BigEarthNet (~1.3 GB) -- reproducible via src/extract_subset.py,
+# not source, not committed. See README.md "Reproducing this".
+data/raw/
+
+# Preprocessed .npy tensor cache (~3+ GB) -- reproducible via src/preprocess.py, derived cache.
+outputs/cache/
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# OS cruft
+.DS_Store
+Thumbs.db

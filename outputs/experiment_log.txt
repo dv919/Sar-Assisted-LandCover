@@ -1,0 +1,33 @@
+train=2040 val=1097 test=1063 classes=19
+
+=== Training Model A (optical only, clean) ===
+[A] epoch 1/8 train_loss=0.3268 val_macroF1=0.3208 val_microF1=0.5431 val_hamming_acc=0.8754 (83s)
+[A] epoch 2/8 train_loss=0.2736 val_macroF1=0.3639 val_microF1=0.5433 val_hamming_acc=0.8814 (70s)
+[A] epoch 3/8 train_loss=0.2626 val_macroF1=0.4008 val_microF1=0.5816 val_hamming_acc=0.8838 (72s)
+[A] epoch 4/8 train_loss=0.2560 val_macroF1=0.4151 val_microF1=0.5824 val_hamming_acc=0.8866 (70s)
+[A] epoch 5/8 train_loss=0.2471 val_macroF1=0.4706 val_microF1=0.6463 val_hamming_acc=0.8963 (70s)
+[A] epoch 6/8 train_loss=0.2400 val_macroF1=0.4718 val_microF1=0.6401 val_hamming_acc=0.8970 (70s)
+[A] epoch 7/8 train_loss=0.2356 val_macroF1=0.4703 val_microF1=0.6391 val_hamming_acc=0.8983 (69s)
+[A] epoch 8/8 train_loss=0.2320 val_macroF1=0.4835 val_microF1=0.6483 val_hamming_acc=0.8991 (70s)
+
+=== Training Model C (degraded optical + SAR fusion) ===
+[C] epoch 1/8 train_loss=0.3423 val_macroF1=0.3030 val_microF1=0.5262 val_hamming_acc=0.8706 (127s)
+[C] epoch 2/8 train_loss=0.2813 val_macroF1=0.3133 val_microF1=0.5397 val_hamming_acc=0.8777 (80s)
+[C] epoch 3/8 train_loss=0.2703 val_macroF1=0.3661 val_microF1=0.5661 val_hamming_acc=0.8822 (83s)
+[C] epoch 4/8 train_loss=0.2650 val_macroF1=0.3829 val_microF1=0.5843 val_hamming_acc=0.8859 (85s)
+[C] epoch 5/8 train_loss=0.2558 val_macroF1=0.4350 val_microF1=0.6154 val_hamming_acc=0.8909 (84s)
+[C] epoch 6/8 train_loss=0.2503 val_macroF1=0.4458 val_microF1=0.6295 val_hamming_acc=0.8915 (80s)
+[C] epoch 7/8 train_loss=0.2448 val_macroF1=0.4394 val_microF1=0.6207 val_hamming_acc=0.8897 (78s)
+[C] epoch 8/8 train_loss=0.2417 val_macroF1=0.4467 val_microF1=0.6245 val_hamming_acc=0.8921 (78s)
+
+=== Evaluating A / B / C across coverage levels on test split ===
+coverage=0.00  B: macroF1=0.4066 hamAcc=0.8961  |  C: macroF1=0.3894 hamAcc=0.8928
+coverage=0.25  B: macroF1=0.3327 hamAcc=0.8921  |  C: macroF1=0.3842 hamAcc=0.8920
+coverage=0.50  B: macroF1=0.2405 hamAcc=0.8815  |  C: macroF1=0.3859 hamAcc=0.8901
+coverage=0.75  B: macroF1=0.2074 hamAcc=0.8717  |  C: macroF1=0.3848 hamAcc=0.8872
+
+Saved outputs/metrics/results.csv
+At 50% coverage: SAR helps (B wrong->C right) n=34; SAR hurts (B right->C wrong) n=16; both fail n=876
+Saved outputs/figures/qualitative_cases_50pct.png
+
+Done. See outputs/figures/, outputs/metrics/, outputs/checkpoints/.
