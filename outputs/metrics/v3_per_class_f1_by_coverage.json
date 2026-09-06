@@ -1,0 +1,90 @@
+{
+  "0.0": {
+    "B": {
+      "Pastures": 0.9462160875773441,
+      "Coniferous forest": 0.7042606516290727,
+      "Mixed forest": 0.46716697936210133,
+      "Arable land": 0.839789574366332,
+      "Transitional woodland, shrub": 0.7138686131386861,
+      "Complex cultivation patterns": 0.4878048780487805,
+      "Land principally occupied by agriculture, with significant areas of natural vegetation": 0.3919491525423729,
+      "Broad-leaved forest": 0.8258555133079848
+    },
+    "C": {
+      "Pastures": 0.9288040949278734,
+      "Coniferous forest": 0.5832147937411095,
+      "Mixed forest": 0.4386792452830189,
+      "Arable land": 0.806966618287373,
+      "Transitional woodland, shrub": 0.7079388201019665,
+      "Complex cultivation patterns": 0.4991055456171735,
+      "Land principally occupied by agriculture, with significant areas of natural vegetation": 0.40800762631077214,
+      "Broad-leaved forest": 0.7796373779637378
+    }
+  },
+  "0.25": {
+    "B": {
+      "Pastures": 0.9412887828162291,
+      "Coniferous forest": 0.6962190352020861,
+      "Mixed forest": 0.423444976076555,
+      "Arable land": 0.8296155671570954,
+      "Transitional woodland, shrub": 0.6468085106382979,
+      "Complex cultivation patterns": 0.5046382189239332,
+      "Land principally occupied by agriculture, with significant areas of natural vegetation": 0.39090909090909093,
+      "Broad-leaved forest": 0.8173628173628174
+    },
+    "C": {
+      "Pastures": 0.9378214118747078,
+      "Coniferous forest": 0.6278755074424899,
+      "Mixed forest": 0.440536013400335,
+      "Arable land": 0.8197812648597242,
+      "Transitional woodland, shrub": 0.7137654770575382,
+      "Complex cultivation patterns": 0.5126760563380282,
+      "Land principally occupied by agriculture, with significant areas of natural vegetation": 0.4144144144144144,
+      "Broad-leaved forest": 0.7936736161035226
+    }
+  },
+  "0.5": {
+    "B": {
+      "Pastures": 0.9076492537313433,
+      "Coniferous forest": 0.6323119777158774,
+      "Mixed forest": 0.35276073619631904,
+      "Arable land": 0.8047619047619048,
+      "Transitional woodland, shrub": 0.5465116279069767,
+      "Complex cultivation patterns": 0.5020491803278688,
+      "Land principally occupied by agriculture, with significant areas of natural vegetation": 0.3656207366984993,
+      "Broad-leaved forest": 0.7727272727272727
+    },
+    "C": {
+      "Pastures": 0.9338303821062441,
+      "Coniferous forest": 0.6821705426356589,
+      "Mixed forest": 0.43880326382592927,
+      "Arable land": 0.822883295194508,
+      "Transitional woodland, shrub": 0.7247639796659404,
+      "Complex cultivation patterns": 0.5120481927710844,
+      "Land principally occupied by agriculture, with significant areas of natural vegetation": 0.4109014675052411,
+      "Broad-leaved forest": 0.8043956043956044
+    }
+  },
+  "0.75": {
+    "B": {
+      "Pastures": 0.8273757628596339,
+      "Coniferous forest": 0.5571847507331378,
+      "Mixed forest": 0.25461254612546125,
+      "Arable land": 0.7742857142857142,
+      "Transitional woodland, shrub": 0.47668393782383417,
+      "Complex cultivation patterns": 0.42857142857142855,
+      "Land principally occupied by agriculture, with significant areas of natural vegetation": 0.2271062271062271,
+      "Broad-leaved forest": 0.6673058485139022
+    },
+    "C": {
+      "Pastures": 0.925,
+      "Coniferous forest": 0.6966824644549763,
+      "Mixed forest": 0.440419447092469,
+      "Arable land": 0.8134692069118299,
+      "Transitional woodland, shrub": 0.7051282051282052,
+      "Complex cultivation patterns": 0.5016216216216216,
+      "Land principally occupied by agriculture, with significant areas of natural vegetation": 0.40390879478827363,
+      "Broad-leaved forest": 0.8102025506376594
+    }
+  }
+}

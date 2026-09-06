@@ -57,7 +57,11 @@ def preprocess_s1(s1_name: str) -> np.ndarray | None:
 
 
 def main():
-    subset = pd.read_csv(DATA_DIR / "subset_patches.csv")
+    import sys
+    subset_csv = sys.argv[1] if len(sys.argv) > 1 else "subset_patches.csv"
+    out_suffix = sys.argv[2] if len(sys.argv) > 2 else ""  # e.g. "_v3" -> subset_patches_v3_complete.csv
+    print(f"Using subset file: {subset_csv}; output suffix: '{out_suffix}'")
+    subset = pd.read_csv(DATA_DIR / subset_csv)
     (CACHE_DIR / "S2").mkdir(parents=True, exist_ok=True)
     (CACHE_DIR / "S1").mkdir(parents=True, exist_ok=True)
 
@@ -93,8 +97,9 @@ def main():
     print(f"FINAL: s2 ok={len(ok_s2)} missing={n_missing_s2}; s1 ok={len(ok_s1)} missing={n_missing_s1}")
 
     complete = subset[subset["patch_id"].isin(ok_s2) & subset["s1_name"].isin(ok_s1)].copy()
-    complete.to_csv(DATA_DIR / "subset_patches_complete.csv", index=False)
-    print(f"Patches with BOTH modalities available: {len(complete)} / {len(subset)}")
+    complete_path = DATA_DIR / f"subset_patches{out_suffix}_complete.csv"
+    complete.to_csv(complete_path, index=False)
+    print(f"Patches with BOTH modalities available: {len(complete)} / {len(subset)} -> {complete_path.name}")
 
     # --- normalization stats from TRAIN split only ---
     train_ids = complete[complete["split"] == "train"]
@@ -120,9 +125,10 @@ def main():
         "s1": robust_stats(s1_stack),
         "n_train_patches_used_for_stats": len(train_ids),
     }
-    with open(DATA_DIR / "norm_stats.json", "w") as f:
+    stats_path = DATA_DIR / f"norm_stats{out_suffix}.json"
+    with open(stats_path, "w") as f:
         json.dump(norm_stats, f, indent=2)
-    print(f"Saved normalization stats computed from {len(train_ids)} train patches.")
+    print(f"Saved normalization stats computed from {len(train_ids)} train patches -> {stats_path.name}")
 
 
 if __name__ == "__main__":

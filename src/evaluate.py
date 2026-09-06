@@ -36,17 +36,19 @@ def predict_logits(model, loader, device="cpu"):
 
 
 def compute_metrics(y_true: np.ndarray, y_prob: np.ndarray, threshold: float = 0.5,
-                     valid_class_mask=None) -> dict:
+                     valid_class_mask=None, classes=None) -> dict:
     """
-    valid_class_mask: optional boolean array/list over the 19 classes. When given, an additional
+    valid_class_mask: optional boolean array/list over `classes`. When given, an additional
     `macro_f1_valid` / `macro_precision_valid` / `macro_recall_valid` is computed over only the
     classes with a mask value of True -- classes that have zero examples in a given split can't be
     learned (0 train support) or can't be scored meaningfully (0 eval-split support), and folding
-    them into a naive 19-class macro average penalizes the model for something no model could fix.
-    The naive all-19-class numbers are still returned (as *_all) for transparency/comparability.
+    them into a naive macro average penalizes the model for something no model could fix. The
+    naive all-class numbers are still returned (as *_all) for transparency/comparability.
+    classes: optional explicit class list (defaults to the round-1/2 19-class vocabulary via
+    load_classes() -- round 3 passes its own 8-class list here).
     """
     y_pred = (y_prob >= threshold).astype(int)
-    classes = load_classes()
+    classes = classes if classes is not None else load_classes()
 
     macro_f1_all = f1_score(y_true, y_pred, average="macro", zero_division=0)
     micro_f1 = f1_score(y_true, y_pred, average="micro", zero_division=0)

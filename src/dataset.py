@@ -15,8 +15,9 @@ DATA_DIR = ROOT / "data"
 CACHE_DIR = ROOT / "outputs" / "cache" / "preprocessed"
 
 
-def load_norm_stats():
-    with open(DATA_DIR / "norm_stats.json") as f:
+def load_norm_stats(stats_path: pathlib.Path = None):
+    stats_path = stats_path or (DATA_DIR / "norm_stats.json")
+    with open(stats_path) as f:
         return json.load(f)
 
 
@@ -42,13 +43,17 @@ class BENSubset(Dataset):
     for evaluation so B and C are compared on the *same* masked realization per test patch.
     """
 
-    def __init__(self, df, mode: str, coverage=0.0, seed_eval: int | None = None):
+    def __init__(self, df, mode: str, coverage=0.0, seed_eval: int | None = None,
+                 classes: list = None, stats: dict = None):
+        """classes/stats: optional overrides (round 3 uses an 8-class vocabulary and its own
+        norm stats, computed from its own larger train split -- see run_experiment_v3.py).
+        Defaults to the round-1/2 19-class vocabulary and stats for backward compatibility."""
         self.df = df.reset_index(drop=True)
         self.mode = mode
         self.coverage = coverage
         self.seed_eval = seed_eval
-        self.classes = load_classes()
-        self.stats = load_norm_stats()
+        self.classes = classes if classes is not None else load_classes()
+        self.stats = stats if stats is not None else load_norm_stats()
 
     def __len__(self):
         return len(self.df)

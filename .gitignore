@@ -13,3 +13,8 @@ __pycache__/
 # OS cruft
 .DS_Store
 Thumbs.db
+
+# Internal-only technical walkthrough (code/dataset/masking explainer) -- personal reference,
+# explicitly not part of the published repository per user instruction.
+code_walkthrough.html
+Code_Data_Masking_Walkthrough.pdf

@@ -1,0 +1,42 @@
+[v3] train=3862 val=2089 test=2049 classes=8
+[v3] Classes with 0 support in some split: [] (expect none, given 97.8% coverage)
+[v3] pos_weight range: min=1.30 max=3.65
+
+=== [Round 3] Training Model B (optical only, clean, 8-class, weighted) ===
+[v3-B] epoch 1/10 train_loss=0.7140 val_macro_f1_valid=0.6353 val_microF1=0.6579 val_hamming_acc=0.7568 (167s)
+[v3-B] epoch 2/10 train_loss=0.6575 val_macro_f1_valid=0.6564 val_microF1=0.6764 val_hamming_acc=0.7562 (143s)
+[v3-B] epoch 3/10 train_loss=0.6452 val_macro_f1_valid=0.6338 val_microF1=0.6625 val_hamming_acc=0.7671 (144s)
+[v3-B] epoch 4/10 train_loss=0.6254 val_macro_f1_valid=0.6895 val_microF1=0.7030 val_hamming_acc=0.7857 (140s)
+[v3-B] epoch 5/10 train_loss=0.6176 val_macro_f1_valid=0.6933 val_microF1=0.7063 val_hamming_acc=0.7865 (138s)
+[v3-B] epoch 6/10 train_loss=0.6038 val_macro_f1_valid=0.6974 val_microF1=0.7109 val_hamming_acc=0.7882 (148s)
+[v3-B] epoch 7/10 train_loss=0.5966 val_macro_f1_valid=0.6986 val_microF1=0.7140 val_hamming_acc=0.7949 (143s)
+[v3-B] epoch 8/10 train_loss=0.5830 val_macro_f1_valid=0.7131 val_microF1=0.7300 val_hamming_acc=0.8119 (134s)
+[v3-B] epoch 9/10 train_loss=0.5746 val_macro_f1_valid=0.7085 val_microF1=0.7244 val_hamming_acc=0.8013 (140s)
+[v3-B] epoch 10/10 train_loss=0.5672 val_macro_f1_valid=0.7105 val_microF1=0.7270 val_hamming_acc=0.8039 (136s)
+
+=== [Round 3] Training Model C (concat fusion, coverage FIXED @ 50%, 8-class) ===
+[v3-C] epoch 1/10 train_loss=0.7281 val_macro_f1_valid=0.6531 val_microF1=0.6714 val_hamming_acc=0.7475 (265s)
+[v3-C] epoch 2/10 train_loss=0.6805 val_macro_f1_valid=0.6625 val_microF1=0.6823 val_hamming_acc=0.7674 (151s)
+[v3-C] epoch 3/10 train_loss=0.6611 val_macro_f1_valid=0.6701 val_microF1=0.6861 val_hamming_acc=0.7696 (150s)
+[v3-C] epoch 4/10 train_loss=0.6428 val_macro_f1_valid=0.6687 val_microF1=0.6833 val_hamming_acc=0.7778 (149s)
+[v3-C] epoch 5/10 train_loss=0.6381 val_macro_f1_valid=0.6763 val_microF1=0.6978 val_hamming_acc=0.7778 (147s)
+[v3-C] epoch 6/10 train_loss=0.6223 val_macro_f1_valid=0.6762 val_microF1=0.6923 val_hamming_acc=0.7763 (153s)
+[v3-C] epoch 7/10 train_loss=0.6123 val_macro_f1_valid=0.6838 val_microF1=0.7047 val_hamming_acc=0.7860 (152s)
+[v3-C] epoch 8/10 train_loss=0.6096 val_macro_f1_valid=0.6930 val_microF1=0.7113 val_hamming_acc=0.7925 (148s)
+[v3-C] epoch 9/10 train_loss=0.6049 val_macro_f1_valid=0.6910 val_microF1=0.7077 val_hamming_acc=0.7903 (148s)
+[v3-C] epoch 10/10 train_loss=0.5974 val_macro_f1_valid=0.6972 val_microF1=0.7143 val_hamming_acc=0.7946 (148s)
+
+=== [Round 3] Evaluating v3 B/C across coverage levels ===
+[v3] coverage=0.00  B: macroF1=0.6721  |  C: macroF1=0.6440
+[v3] coverage=0.25  B: macroF1=0.6563  |  C: macroF1=0.6576
+[v3] coverage=0.50  B: macroF1=0.6105  |  C: macroF1=0.6662
+[v3] coverage=0.75  B: macroF1=0.5266  |  C: macroF1=0.6621
+
+=== [Round 3] Cross-round comparison: round-2 (shallow) vs round-3 (deep) models, both evaluated on round-3's test set, same 8 classes ===
+coverage=0.00  shallow_B=0.6508 deep_B=0.6721  |  shallow_C=0.6310 deep_C=0.6440
+coverage=0.25  shallow_B=0.6474 deep_B=0.6563  |  shallow_C=0.6406 deep_C=0.6576
+coverage=0.50  shallow_B=0.6153 deep_B=0.6105  |  shallow_C=0.6478 deep_C=0.6662
+coverage=0.75  shallow_B=0.5370 deep_B=0.5266  |  shallow_C=0.6359 deep_C=0.6621
+Saved outputs/figures/v3_cross_round_comparison.png
+
+[Round 3] Done. See outputs/figures/v3_*.png, outputs/metrics/*_v3*, outputs/checkpoints/*_v3.pt.

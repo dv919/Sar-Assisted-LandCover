@@ -1,0 +1,20 @@
+Using subset file: subset_patches_v3.csv; output suffix: '_v3'
+processed 500/8000 rows (s2 ok=500 missing=0; s1 ok=500 missing=0)
+processed 1000/8000 rows (s2 ok=1000 missing=0; s1 ok=1000 missing=0)
+processed 1500/8000 rows (s2 ok=1500 missing=0; s1 ok=1500 missing=0)
+processed 2000/8000 rows (s2 ok=2000 missing=0; s1 ok=2000 missing=0)
+processed 2500/8000 rows (s2 ok=2500 missing=0; s1 ok=2500 missing=0)
+processed 3000/8000 rows (s2 ok=3000 missing=0; s1 ok=3000 missing=0)
+processed 3500/8000 rows (s2 ok=3500 missing=0; s1 ok=3500 missing=0)
+processed 4000/8000 rows (s2 ok=4000 missing=0; s1 ok=4000 missing=0)
+processed 4500/8000 rows (s2 ok=4500 missing=0; s1 ok=4500 missing=0)
+processed 5000/8000 rows (s2 ok=5000 missing=0; s1 ok=5000 missing=0)
+processed 5500/8000 rows (s2 ok=5500 missing=0; s1 ok=5500 missing=0)
+processed 6000/8000 rows (s2 ok=6000 missing=0; s1 ok=6000 missing=0)
+processed 6500/8000 rows (s2 ok=6500 missing=0; s1 ok=6500 missing=0)
+processed 7000/8000 rows (s2 ok=7000 missing=0; s1 ok=7000 missing=0)
+processed 7500/8000 rows (s2 ok=7500 missing=0; s1 ok=7500 missing=0)
+processed 8000/8000 rows (s2 ok=8000 missing=0; s1 ok=8000 missing=0)
+FINAL: s2 ok=8000 missing=0; s1 ok=8000 missing=0
+Patches with BOTH modalities available: 8000 / 8000 -> subset_patches_v3_complete.csv
+Saved normalization stats computed from 3862 train patches -> norm_stats_v3.json

@@ -134,7 +134,10 @@ def stream_extract(fname: str, needed_ids: set, last_needed_product: str,
 
 
 def main():
-    subset = pd.read_csv(DATA_DIR / "subset_patches.csv")
+    import sys
+    subset_csv = sys.argv[1] if len(sys.argv) > 1 else "subset_patches.csv"
+    print(f"Using subset file: {subset_csv}")
+    subset = pd.read_csv(DATA_DIR / subset_csv)
     s2_needed = set(subset["patch_id"])
     s1_needed = set(subset["s1_name"])
 

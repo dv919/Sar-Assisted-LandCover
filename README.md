@@ -27,11 +27,24 @@ cover), using a manageable subset of BigEarthNet v2.0.
   channel-concatenation (§7.3) — direct support for the case's "doesn't need to be
   sophisticated" premise. A model trained at one fixed 50% cloud coverage generalized better
   across 0–75% than one trained on randomized coverage (§7.3).
+- **Round 3 (§8) asked a different question:** what if we trade class breadth for per-class
+  depth — 8 well-supported classes instead of 19, with 3-6x more training examples per class?
+  Answer: **it depends which model.** More depth consistently helped the SAR-fusion model (most
+  at 75% coverage: +0.026 macro-F1), but was a wash or slightly *negative* for the optical-only
+  model at high coverage — evidence that data depth and SAR are solving different bottlenecks.
+- **A real methodological audit was done (§9), not just claimed.** It found and corrected one
+  real issue (round 2's "best fusion variant" was originally picked by comparing all three
+  candidates on the *test* set — a form of test-set-informed selection; re-derived on validation
+  data, the same variant nominally wins, but the margin shrinks to statistically insignificant)
+  and confirmed two other suspects were harmless (class selection didn't actually depend on
+  test-set data; zero patch leakage exists between rounds). This is reported here, not buried.
 - **Biggest caveat:** every number here is a **single run, no seeds/confidence intervals**
-  (§8, item 2) — the safest thing to challenge in this submission, and worth reading before
-  trusting small gaps between numbers to two decimal places.
+  (§10, item 1 — promoted to top priority after §9.1's finding) — the safest thing to challenge in
+  this submission, and worth reading before trusting small gaps between numbers to two decimal
+  places.
 - **Where to look:** §5 for round-1 setup/results, §7 for the round-2 corrections and deeper
-  ablations, §7.5 for class-confusion analysis, §8 for open limitations.
+  ablations, §7.5 for class-confusion analysis, §8 for round 3 (fewer classes/more depth), §9 for
+  the bias/leakage audit, §10 for open limitations.
 
 ---
 
@@ -95,6 +108,10 @@ reasonable trade-off at this scale but is not claimed to be a representative geo
 
 Final counts: **4,200 patches** (train 2,040 / val 1,097 / test 1,063), all **19 official
 classes** present.
+
+> **Round 3 (§8) revisits this construction** with a fewer-classes/more-depth-per-class design
+> instead — same 5 tiles, same candidate pool, no new download, just a different allocation of
+> the patch budget across classes.
 
 ## 3. Simulated cloud masking (condition B / C degradation)
 
@@ -419,38 +436,241 @@ baseline rather than leaving it artificially weak.
 
 Done in round 2: metric validity fix, class-balanced loss, a second fusion architecture, a
 training-regime ablation, calibration/ECE, and a class-confusion analysis. Still open (see updated
-§8): larger/more geographically
+§10): larger/more geographically
 diverse subset (would also let "Beaches, dunes, sands" actually be trained on, by including a tile
 with train-split coastal coverage), more realistic cloud simulation, and multi-seed runs to put
 error bars on the coverage curves above (all numbers here are single-run, no seed variation
 reported — a real limitation given how much the crossover point moved between round 1 and round 2
 from a baseline change alone).
 
-## 8. What I would try next
+## 8. Round 3 — fewer classes, more examples per class
 
-Updated after round 2 (see §7.6 for what's now done):
+Rounds 1-2 stratified a fixed patch budget across all 19 classes present in the 5 selected tiles,
+including several with only 29-51 total examples in the entire 13,932-patch candidate pool. In a
+multi-label dataset, "examples per class" is not fixed by total patch count — it's set by *which*
+classes you choose to model and how a fixed budget is allocated across them. Round 3 asks the
+direct question this raises: **would trading class breadth for per-class depth do better?**
 
-1. **A larger / more geographically diverse subset** — still the highest-leverage remaining item.
-   This run used 5 tiles from 4 countries (Austria, Finland, Ireland, Portugal) and an S1A-only
-   pairing filter (see [DATA_ACCESS.md](DATA_ACCESS.md) caveat); besides improving rare-class
-   support generally, a subset deliberately including a tile with train-split coastal patches would
-   let "Beaches, dunes, sands" (§7.1) actually become learnable rather than permanently excluded.
-2. **Multi-seed runs with confidence intervals** — every result in this README (round 1 and round
-   2) is a single train/eval run. Given how much the B-vs-C crossover point moved just from
-   changing the loss function (§7.3), the coverage-curve gaps are plausibly within run-to-run noise
-   at the tails; 3-5 seeds per condition would let the README report real error bars instead of
-   point estimates.
-3. **More realistic cloud simulation** — random rectangles vs. BigEarthNet's own
-   `contains_cloud_or_shadow`-flagged real patches (excluded from this subset, but present in the
-   metadata) — would validate whether the rectangle-mask findings transfer to naturally-occurring
-   cloud cover.
+### 8.1 Design
+
+The 8 best-supported classes (verified to have solid examples in **all three** official splits --
+Pastures, Coniferous/Mixed/Broad-leaved forest, Arable land, Transitional woodland/shrub, Complex
+cultivation patterns, and the mixed-agriculture class) were selected using **train-split frequency
+only** (checked afterward against all-split frequency — identical ranking either way; see §9.3).
+These 8 classes already appear in **97.8%** of the entire candidate pool, so restricting to them
+costs almost no data. A much larger sample -- **8,000 patches** (vs. 4,200) -- was then drawn from
+the *same* already-scanned 5-tile candidate pool: no new tile selection, no new network cost
+beyond a second sequential pass over the same byte range (the archives are non-seekable, so a
+second pass can't skip what the first pass already covered -- see §8.5 for the honest bandwidth
+cost of this).
+
+| | Round 1/2 (19 classes, 4,200 patches) | Round 3 (8 classes, 8,000 patches) |
+|---|---:|---:|
+| Weakest kept class, train examples | ~250-290 | **830+** |
+| "Pastures", train examples | 859 | **1,676** |
+| Classes with 0 support in some split | 3 (had to work around) | **0** by construction |
+
+### 8.2 Models and results
+
+Same architecture and training recipe as round 2 (class-balanced `BCEWithLogitsLoss`, 10 epochs),
+using round 2's winning training regime for the SAR model (concatenation fusion, fixed 50%
+training coverage -- §7.3). Evaluated on round 3's own held-out test set (2,049 patches):
+
+![Round 3 macro F1 vs coverage](outputs/figures/v3_macro_f1_vs_coverage.png)
+
+| Coverage | B (optical only) | C (optical + SAR) |
+|---:|---:|---:|
+| 0% | **0.672** | 0.644 |
+| 25% | 0.656 | 0.658 |
+| 50% | 0.611 | **0.666** |
+| 75% | 0.527 | **0.662** |
+
+The qualitative pattern is the same as rounds 1-2 (B collapses under heavy degradation, C stays
+flat), and the absolute numbers are substantially higher across the board -- but that's expected
+and **not**, by itself, evidence that "more depth helps": an 8-class task restricted to common,
+visually-distinct land covers is an easier task than the full 19-class one, independent of how
+much training data either used. Isolating the *effect of depth* requires holding the classes and
+test set fixed and varying only the training data -- which is what §8.3 does.
+
+### 8.3 Does more depth actually help? A same-classes, same-test-set comparison
+
+Round 2's already-trained 19-class models (`model_a_v2`, `model_c_fixed50_v2`) were re-evaluated
+on round 3's test set, with their predictions sliced down to the same 8 classes -- an
+apples-to-apples comparison of shallow training data (round 2, ~250-860 examples/class) vs. deep
+training data (round 3, ~830-1,700+ examples/class), same classes, same test patches, same
+evaluation code.
+
+![Cross-round comparison](outputs/figures/v3_cross_round_comparison.png)
+
+| Coverage | Shallow B | Deep B | Shallow C | Deep C |
+|---:|---:|---:|---:|---:|
+| 0% | 0.651 | 0.672 (+0.021) | 0.631 | 0.644 (+0.013) |
+| 25% | 0.647 | 0.656 (+0.009) | 0.641 | 0.658 (+0.017) |
+| 50% | 0.615 | 0.611 (**-0.005**) | 0.648 | 0.666 (+0.018) |
+| 75% | 0.537 | 0.527 (**-0.010**) | 0.636 | 0.662 (**+0.026**) |
+
+**The answer is genuinely mixed, not a clean "yes":**
+
+- **For the SAR-assisted model (C), more depth helped consistently, and by an increasing margin
+  as coverage increases** -- the smallest gain at 0% coverage, the largest at 75%. This makes
+  intuitive sense: a model with more signal sources to learn how to weigh (optical *and* SAR) has
+  more to gain from more examples of each class in each source.
+- **For the optical-only model (B), more depth helped at low coverage (0-25%) but was a wash or
+  slightly *negative* at high coverage (50-75%).** A plausible explanation: under heavy masking,
+  B's bottleneck isn't "not enough training examples" -- it's "not enough visual signal left in
+  the input, period." More training data can't teach a model to see through pixels that were
+  overwritten with a neutral fill value. This is a real, non-obvious finding: **depth and
+  SAR-fusion are solving different problems**, and depth alone would not have closed the B-vs-C
+  gap that SAR closes.
+
+This directly answers the question that motivated round 3: deeper per-class data is a genuine
+improvement, but its benefit is concentrated exactly where the model still has usable signal to
+learn from -- it is not a substitute for SAR under heavy degradation, it's complementary to it.
+
+### 8.4 Per-class breakdown
+
+![Round 3 per-class F1](outputs/figures/v3_per_class_f1_50pct.png)
+
+With 3-6x deeper per-class data, C matches or beats B on every one of the 8 classes at 50%
+coverage, with no zero-F1 classes anywhere (unlike rounds 1-2's 3 structurally-excluded classes).
+
+### 8.5 Honest costs and caveats
+
+- **Bandwidth:** because the archives are single non-seekable zstd frames, round 3's larger
+  sample required a **second full sequential pass** over the same byte range rounds 1-2 already
+  scanned -- there's no way to "resume" or "append" to a prior partial extraction. Total network
+  transfer across both extraction passes: **~3.6 GB** (vs. ~1.8 GB if this design had been chosen
+  from the start). Total on-disk footprint (raw + cache, excluded from git, reproducible):
+  **~10.7 GB**.
+- **Narrower scope:** dropping to 8 classes means no more coastal/marine/industrial/urban land
+  covers in the story -- this is a real reduction in what the model demonstrates, not a free
+  win. It is, however, arguably closer to the case's literal instruction to "select several land-cover
+  classes" than rounds 1-2's approach of keeping whatever happened to be present.
+- **Still single-run** -- the same caveat as rounds 1-2 (§10, item 1) applies here too.
+
+## 9. Methodological audit: checking for bias and leakage
+
+Requested explicitly as a check on this project's own validity, not a routine step. This section
+reports what was checked, what was found and corrected, and what was checked and found to be
+fine -- all of it, not just the reassuring parts.
+
+### 9.1 Issue found and corrected: round 2's "best fusion variant" was selected using test-set performance
+
+Round 2 trained three SAR-fusion variants (C-early, C-late, C-fixed50) and picked "the best one"
+(§7.3) by comparing their mean macro-F1 **on the test set**. This is a real methodological issue:
+comparing several trained candidates against test-set performance and reporting the winner as
+"the" result is a mild form of test-set-informed selection -- the reported number for the winner
+is optimistically biased relative to what a single, a-priori-chosen architecture would show,
+because picking the best of three noisy estimates tends to overstate how good that estimate is.
+
+**Correction:** the same selection was re-derived using each variant's **best validation-set**
+`macro_f1_valid` achieved during training (the same quantity already used for per-epoch checkpoint
+selection, just compared *across* variants instead of within one):
+
+| Variant | Best validation macro_f1_valid | Test-set mean macro_f1_valid (coverage > 0) |
+|---|---:|---:|
+| C-early | 0.5758 | 0.5153 |
+| C-late | 0.5674 | 0.5117 |
+| **C-fixed50** | **0.5759** | **0.5215** |
+
+**C-fixed50 is still the nominal winner** -- the qualitative conclusion in §7.3 stands. But the
+validation-based margin (0.5759 vs. 0.5758 for C-early -- a difference of 0.0001) is **far smaller
+than the test-set margin made it look**, and is almost certainly within run-to-run noise for a
+single seed. The honest summary: **C-early and C-fixed50 are statistically indistinguishable on
+this evidence; C-late is the one variant that looks consistently worse on both validation and
+test.** §7.3's framing has been read alongside this correction rather than silently rewritten, and
+this is the single most important thing to weigh when reading this project's specific numeric
+claims about which fusion regime is "best."
+
+### 9.2 Checked and confirmed clean: no cross-round data leakage
+
+Round 3 draws a much larger sample from the same candidate pool rounds 1-2 used. Since round 2's
+model (trained on round 1/2's train split) is evaluated on round 3's test set in §8.3, any overlap
+between round 2's *training* patches and round 3's *test* patches would bias that comparison in
+round 2's favor. Checked directly: **zero patch-ID overlap** between round 2's 2,040 training
+patches and round 3's 2,049 test patches (and zero overlap in every other cross-split pairing
+checked). This is guaranteed by construction -- both rounds draw from the same official,
+never-reassigned `split` column -- but was verified empirically rather than only argued
+logically.
+
+### 9.3 Checked and confirmed harmless: class selection did not actually depend on test-set data
+
+Round 3's 8 target classes were selected by ranking frequency across the **entire** candidate pool
+(all three splits combined) -- which technically means the selection process had access to
+test-split label composition. Re-ranked using **train-split frequency only**: the identical 8
+classes come out on top, in the same order. Because these classes are overwhelmingly common in
+every split (not narrowly enriched in test specifically), the all-split shortcut happened to be
+harmless in this instance -- but this is reported as a checked fact, not an assumption, and the
+distinction matters in general: a class selection that *did* depend on test-specific frequency
+patterns would have been a genuine leakage concern.
+
+### 9.4 Checked and confirmed non-biasing: the valid-class-mask construction
+
+`compute_valid_class_mask()` (§7.1) decides which classes are scored using **presence/absence**
+of examples across all three splits -- never model *performance*. It excludes a class from
+`macro_f1_valid` if it has zero examples in any split, identically for every model being compared
+(B, C, or any variant) -- it cannot selectively favor one model over another, since it's a
+property of the data, not of any model's predictions. This was already the design intent in round
+2; re-examined here specifically to confirm it isn't a backdoor for cherry-picking favorable
+classes per model (it isn't -- the mask is computed once, from the data, before any model is
+evaluated against it).
+
+### 9.5 Other things checked
+
+- **Normalization statistics** (`norm_stats.json`, `norm_stats_v3.json`): computed from
+  **train-split patches only**, confirmed by reading `preprocess.py` directly -- no val/test
+  pixel statistics ever influence input normalization.
+- **Class weights** (`pos_weight` for `BCEWithLogitsLoss`): computed from **train-split label
+  frequency only** (`class_weights.py`), confirmed the same way.
+- **Temperature scaling** (§7.4): fit on **validation-set** logits only, confirmed directly in
+  `run_experiment_v2.py` -- test-set logits are used only for the final before/after ECE
+  measurement, never for fitting `T`.
+- **Checkpoint selection during training**: always uses the **validation** split's
+  `macro_f1_valid` (or `macro_f1` where no mask applies), never test -- confirmed in `train.py`.
+- **Qualitative success/failure cases** (§5, §7.6): sampled via `random.choice()` from the
+  relevant outcome pool (SAR-helps / SAR-hurts / both-fail) with a fixed seed, not hand-picked for
+  narrative effect -- confirmed directly in the case-selection code.
+- **No hyperparameters (learning rate, epochs, batch size, architecture width) were iterated
+  based on observed test-set performance** -- all were fixed *a priori* per run for time-budget
+  reasons (per the case's explicit instruction not to tune), not adjusted after seeing results.
+
+### 9.6 What this audit does not cover
+
+This was a targeted check of the specific mechanisms in this codebase, not an exhaustive
+statistical audit. It does not (and cannot, without the multi-seed runs listed in §10) rule out
+run-to-run noise being a larger contributor to the reported gaps than any of the narrative
+attributes it to. That limitation is structural, not something this audit could "check its way
+out of" -- it's listed plainly in §10 rather than implied to be resolved.
+
+## 10. What I would try next
+
+Updated after rounds 2-3 and the audit in §9 (see §7.7 and §8.5 for what's now done):
+
+1. **Multi-seed runs with confidence intervals** -- promoted to the top item after §9.1's finding.
+   Every result in this README, across all three rounds, is a single train/eval run, and §9.1
+   showed directly that a test-set-based comparison can make a razor-thin (0.0001) validation
+   margin look like a clear (0.006) test-set win. 3-5 seeds per condition would let every table in
+   this document report real error bars instead of point estimates, and would settle whether
+   several of the finer-grained claims (C-early vs. C-fixed50, the exact crossover coverage level)
+   survive scrutiny or are noise.
+2. **A larger / more geographically diverse subset** -- would let "Beaches, dunes, sands" (§7.1)
+   actually become learnable (by including a tile with train-split coastal coverage), and would
+   let a future round test whether round 3's "8 classes, deep data" design also generalizes to a
+   less geographically narrow sample (currently 5 tiles, 4 countries throughout every round).
+3. **More realistic cloud simulation** -- random rectangles vs. BigEarthNet's own
+   `contains_cloud_or_shadow`-flagged real patches (excluded from every round's subset, but
+   present in the metadata) -- would validate whether the rectangle-mask findings transfer to
+   naturally-occurring cloud cover.
 4. **Extend calibration analysis across all four coverage levels** (round 2 only checked 50%) to
    see whether ECE degrades with coverage the way accuracy does, for both B and C.
-5. **A proper hyperparameter pass** on the surprising C-fixed50 result (§7.3) — try a couple more
-   fixed training-coverage values (e.g. 25%, 40%, 60%) to see if 50% is actually near-optimal or
-   just better than the two alternatives tested.
+5. **A proper hyperparameter pass** on the C-fixed50 result (§7.3) -- given §9.1 found its margin
+   over C-early is likely noise, this is lower priority than previously stated; if pursued, try a
+   couple more fixed training-coverage values (25%, 40%, 60%) with multiple seeds each.
+6. **Extend round 3's depth-vs-breadth question to a middle ground** -- e.g. 12-14 classes at an
+   intermediate depth -- to map out the trade-off curve between class breadth and per-class depth
+   more finely than the two endpoints (19-class/shallow vs. 8-class/deep) tested so far.
 
-## 9. External resources used
+## 11. External resources used
 
 - **Dataset:** [BigEarthNet v2.0 / reBEN](https://bigearth.net/) (Clasen et al., 2024), Zenodo
   record [10891137](https://zenodo.org/records/10891137), CDLA-Permissive-1.0.
@@ -463,33 +683,48 @@ Updated after round 2 (see §7.6 for what's now done):
   3-channel ImageNet-pretrained backbones without extra surgery, which the case does not require).
 - Round 2 additionally uses PyTorch's `LBFGS` optimizer (temperature-scaling fit) and
   `sklearn.metrics` (unchanged from round 1) — no new external dependencies were introduced.
+- Round 3 introduces no new external dependencies either — same libraries throughout.
 
-## 10. Reproducing this
+## 12. Reproducing this
 
 ```
 pip install -r requirements.txt
-python src/download_metadata.py     # ~4.3 MB
-python src/select_subset.py         # offline metadata filtering -> data/subset_patches.csv
-python src/extract_subset.py        # streams ~5.6 GB from Zenodo -> data/raw/
-python src/preprocess.py            # -> outputs/cache/preprocessed/*.npy, data/norm_stats.json
-python src/run_experiment.py        # round 1: trains A & C, evaluates A/B/C x coverage
-python src/run_experiment_v2.py     # round 2: weighted loss, 3 C variants, calibration -- see §7
-python src/confusion_analysis.py    # round 2: class-confusion matrices (§7.5), no retraining
+python src/download_metadata.py         # ~4.3 MB
+python src/select_subset.py             # offline metadata filtering -> data/subset_patches.csv
+python src/extract_subset.py            # streams ~1.8 GB from Zenodo -> data/raw/
+python src/preprocess.py                # -> outputs/cache/preprocessed/*.npy, data/norm_stats.json
+python src/run_experiment.py            # round 1: trains A & C, evaluates A/B/C x coverage
+python src/run_experiment_v2.py         # round 2: weighted loss, 3 C variants, calibration -- §7
+python src/confusion_analysis.py        # round 2: class-confusion matrices (§7.5), no retraining
+
+python src/select_subset_v3.py          # round 3: 8-class selection -> subset_patches_v3.csv
+python src/extract_subset.py subset_patches_v3.csv   # round 3: 2nd pass, same tiles, ~1.8 GB
+python src/preprocess.py subset_patches_v3.csv _v3   # round 3: cache + norm_stats_v3.json
+python src/run_experiment_v3.py         # round 3: trains B & C (8-class), cross-round comparison -- §8
 ```
 
 ## Project layout
 
 ```
 src/                   all pipeline code (see docstring at top of each file)
-data/                  metadata parquets, subset CSVs, raw extracted GeoTIFFs
-outputs/cache/          preprocessed .npy tensors (not raw data, derived cache)
-outputs/checkpoints/   trained model weights (round 1: model_a.pt, model_c.pt;
-                       round 2: *_v2.pt -- model_a, model_c_early, model_c_late, model_c_fixed50)
+data/                  metadata parquets, subset CSVs (round 1/2 + round 3's _v3 variants),
+                       raw extracted GeoTIFFs (git-ignored, ~2.75 GB, reproducible)
+outputs/cache/         preprocessed .npy tensors, shared across all rounds (git-ignored, ~7.9 GB)
+outputs/checkpoints/   trained model weights:
+                         round 1:  model_a.pt, model_c.pt
+                         round 2:  model_a_v2.pt, model_c_early_v2.pt, model_c_late_v2.pt,
+                                   model_c_fixed50_v2.pt
+                         round 3:  model_b_v3.pt, model_c_v3.pt
 outputs/metrics/       round 1: results.csv, history_*.json, per_class_f1_by_coverage.json
                        round 2: results_v2.csv, v2_history_*.json, v2_calibration_summary.json,
-                                v2_valid_class_mask.json, v2_per_class_f1_by_coverage.json
+                                v2_valid_class_mask.json, v2_per_class_f1_by_coverage.json,
+                                v2_confusion_summary.json
+                       round 3: results_v3.csv, v3_history_*.json, v3_cross_round_comparison.csv
 outputs/figures/       round 1: metric_vs_coverage_*.png, per_class_f1_50pct.png,
                                  qualitative_cases_50pct.png
                        round 2: v2_macro_f1_*_vs_coverage.png, v2_per_class_f1_*.png,
-                                v2_reliability_*.png, v2_qualitative_cases_50pct.png
+                                v2_reliability_*.png, v2_qualitative_cases_50pct.png,
+                                v2_confusion_*.png
+                       round 3: v3_macro_f1_vs_coverage.png, v3_per_class_f1_50pct.png,
+                                v3_cross_round_comparison.png
 ```

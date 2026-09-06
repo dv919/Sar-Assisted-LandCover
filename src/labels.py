@@ -20,20 +20,25 @@ def build_and_save_classes(subset_csv: pathlib.Path = None) -> list:
     return all_labels
 
 
-def load_classes() -> list:
-    if not CLASSES_PATH.exists():
+def load_classes(classes_path: pathlib.Path = None) -> list:
+    classes_path = classes_path or CLASSES_PATH
+    if not classes_path.exists():
         return build_and_save_classes()
-    with open(CLASSES_PATH) as f:
+    with open(classes_path) as f:
         return json.load(f)
 
 
 def encode_labels(label_list, classes=None):
-    """label_list: python list of class-name strings -> multi-hot vector (list[int])."""
+    """label_list: python list of class-name strings -> multi-hot vector (list[int]).
+    Labels not present in `classes` are silently ignored (round 3 restricts to an 8-class
+    vocabulary, but a patch's original annotation can carry other BigEarthNet labels too --
+    those are simply not a prediction target, not an error)."""
     classes = classes or load_classes()
     idx = {c: i for i, c in enumerate(classes)}
     vec = [0] * len(classes)
     for lbl in label_list:
-        vec[idx[lbl]] = 1
+        if lbl in idx:
+            vec[idx[lbl]] = 1
     return vec
 
 

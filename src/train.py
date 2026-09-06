@@ -12,7 +12,7 @@ from evaluate import compute_metrics, predict
 
 def train_model(model, train_ds, val_ds, epochs=8, lr=1e-3, batch_size=32,
                  device="cpu", num_workers=0, log_prefix="", pos_weight=None,
-                 valid_class_mask=None):
+                 valid_class_mask=None, classes=None):
     """
     pos_weight: optional per-class tensor for BCEWithLogitsLoss (class-balanced loss). See
     class_weights.py for how this is derived from train-split label frequency.
@@ -20,6 +20,9 @@ def train_model(model, train_ds, val_ds, epochs=8, lr=1e-3, batch_size=32,
     checkpoint selection uses macro_f1_valid (excludes classes with 0 examples in some split)
     instead of the naive all-19-class macro_f1, so model selection isn't skewed by structurally
     unlearnable/untestable classes.
+    classes: explicit class list matching the model's output dimension -- required whenever the
+    vocabulary isn't the default 19 (round 3's 8-class run), otherwise compute_metrics's
+    per-class F1 dict silently mismatches class names to columns.
     """
     train_loader = DataLoader(train_ds, batch_size=batch_size, shuffle=True, num_workers=num_workers)
     val_loader = DataLoader(val_ds, batch_size=batch_size, shuffle=False, num_workers=num_workers)
@@ -53,7 +56,7 @@ def train_model(model, train_ds, val_ds, epochs=8, lr=1e-3, batch_size=32,
         sched.step()
 
         y_true, y_prob, _ = predict(model, val_loader, device)
-        metrics = compute_metrics(y_true, y_prob, valid_class_mask=valid_class_mask)
+        metrics = compute_metrics(y_true, y_prob, valid_class_mask=valid_class_mask, classes=classes)
         elapsed = time.time() - t0
         print(f"{log_prefix}epoch {epoch}/{epochs} train_loss={running_loss/max(n_batches,1):.4f} "
               f"val_{select_key}={metrics[select_key]:.4f} val_microF1={metrics['micro_f1']:.4f} "

@@ -1,0 +1,32 @@
+{
+  "train": {
+    "Mixed forest": 1404,
+    "Pastures": 1676,
+    "Broad-leaved forest": 830,
+    "Complex cultivation patterns": 997,
+    "Land principally occupied by agriculture, with significant areas of natural vegetation": 873,
+    "Transitional woodland, shrub": 1090,
+    "Arable land": 1260,
+    "Coniferous forest": 1530
+  },
+  "validation": {
+    "Complex cultivation patterns": 568,
+    "Land principally occupied by agriculture, with significant areas of natural vegetation": 582,
+    "Coniferous forest": 706,
+    "Pastures": 920,
+    "Arable land": 1012,
+    "Transitional woodland, shrub": 619,
+    "Mixed forest": 684,
+    "Broad-leaved forest": 418
+  },
+  "test": {
+    "Coniferous forest": 447,
+    "Pastures": 1064,
+    "Land principally occupied by agriculture, with significant areas of natural vegetation": 352,
+    "Arable land": 1126,
+    "Complex cultivation patterns": 370,
+    "Broad-leaved forest": 636,
+    "Transitional woodland, shrub": 658,
+    "Mixed forest": 365
+  }
+}
