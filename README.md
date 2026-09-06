@@ -4,9 +4,11 @@ A case study investigating whether Sentinel-1 SAR imagery improves land-cover cl
 Sentinel-2 optical observations are partially unavailable (e.g. cloud cover), using a manageable
 subset of BigEarthNet v2.0.
 
-> Full requirements extraction: [REQUIREMENTS.md](REQUIREMENTS.md). Full data-access research
-> and the subset-selection rationale: [DATA_ACCESS.md](DATA_ACCESS.md). This README is the
-> top-level narrative; those two files carry the detailed research trail.
+> Full data-access research and the subset-selection rationale:
+> [DATA_ACCESS.md](DATA_ACCESS.md). This README is the top-level narrative; that file carries
+> the detailed data-access research trail. (A separate requirements-extraction pass against the
+> original case study PDF was also done as part of this project's process, kept as a local
+> working document rather than published here.)
 
 ---
 
