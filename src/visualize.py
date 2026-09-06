@@ -76,7 +76,7 @@ def plot_multi_condition_vs_coverage(results_df, metric="macro_f1_valid", out_na
     _style_axes(ax)
     ax.set_xlabel("Simulated cloud coverage (%)")
     ax.set_ylabel(metric.replace("_", " "))
-    ax.set_title(f"{metric.replace('_', ' ').title()} vs. cloud coverage (round 2)")
+    ax.set_title(f"{metric.replace('_', ' ').title()} vs. cloud coverage — fusion configuration comparison")
     ax.legend(frameon=False, fontsize=8.5, loc="best")
     fig.tight_layout()
     out_name = out_name or f"v2_multi_{metric}.png"

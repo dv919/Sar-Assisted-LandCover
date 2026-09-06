@@ -105,12 +105,12 @@ def main():
     M_b = confusion_matrix_multilabel(y_true_b, y_pred_b, classes, valid_idx)
     M_c = confusion_matrix_multilabel(y_true_c, y_pred_c, classes, valid_idx)
 
-    plot_confusion(M_b, valid_names, "Model B (degraded optical only) @ 50% coverage: "
+    plot_confusion(M_b, valid_names, "Optical-only model (B) @ 50% coverage: "
                                       "missed class (row) vs. wrongly-predicted class (col)",
-                   "v2_confusion_B.png")
-    plot_confusion(M_c, valid_names, "Model C (C-fixed50, optical+SAR) @ 50% coverage: "
+                   "confusion_B.png")
+    plot_confusion(M_c, valid_names, "SAR-fusion model @ 50% coverage: "
                                       "missed class (row) vs. wrongly-predicted class (col)",
-                   "v2_confusion_C.png")
+                   "confusion_fusion.png")
 
     top_b = top_pairs(M_b, valid_names)
     top_c = top_pairs(M_c, valid_names)
@@ -126,10 +126,10 @@ def main():
         "top_pairs_B": [{"count": int(c), "missed": i, "predicted_instead": j} for c, i, j in top_b],
         "top_pairs_C": [{"count": int(c), "missed": i, "predicted_instead": j} for c, i, j in top_c],
     }
-    with open(METRICS_DIR / "v2_confusion_summary.json", "w") as f:
+    with open(METRICS_DIR / "confusion_summary.json", "w") as f:
         json.dump(summary, f, indent=2)
-    print("\nSaved outputs/figures/v2_confusion_B.png, v2_confusion_C.png, "
-          "outputs/metrics/v2_confusion_summary.json")
+    print("\nSaved outputs/figures/confusion_B.png, confusion_fusion.png, "
+          "outputs/metrics/confusion_summary.json")
 
 
 if __name__ == "__main__":

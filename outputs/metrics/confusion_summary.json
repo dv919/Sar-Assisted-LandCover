@@ -1,0 +1,104 @@
+{
+  "valid_classes": [
+    "Agro-forestry areas",
+    "Arable land",
+    "Broad-leaved forest",
+    "Complex cultivation patterns",
+    "Coniferous forest",
+    "Industrial or commercial units",
+    "Inland waters",
+    "Inland wetlands",
+    "Land principally occupied by agriculture, with significant areas of natural vegetation",
+    "Mixed forest",
+    "Moors, heathland and sclerophyllous vegetation",
+    "Natural grassland and sparsely vegetated areas",
+    "Pastures",
+    "Permanent crops",
+    "Transitional woodland, shrub",
+    "Urban fabric"
+  ],
+  "top_pairs_B": [
+    {
+      "count": 62,
+      "missed": "Mixed forest",
+      "predicted_instead": "Permanent crops"
+    },
+    {
+      "count": 44,
+      "missed": "Mixed forest",
+      "predicted_instead": "Natural grassland and sparsely vegetated areas"
+    },
+    {
+      "count": 42,
+      "missed": "Mixed forest",
+      "predicted_instead": "Agro-forestry areas"
+    },
+    {
+      "count": 35,
+      "missed": "Transitional woodland, shrub",
+      "predicted_instead": "Arable land"
+    },
+    {
+      "count": 34,
+      "missed": "Land principally occupied by agriculture, with significant areas of natural vegetation",
+      "predicted_instead": "Natural grassland and sparsely vegetated areas"
+    },
+    {
+      "count": 34,
+      "missed": "Arable land",
+      "predicted_instead": "Permanent crops"
+    },
+    {
+      "count": 33,
+      "missed": "Land principally occupied by agriculture, with significant areas of natural vegetation",
+      "predicted_instead": "Inland wetlands"
+    },
+    {
+      "count": 31,
+      "missed": "Mixed forest",
+      "predicted_instead": "Inland wetlands"
+    }
+  ],
+  "top_pairs_C": [
+    {
+      "count": 38,
+      "missed": "Inland waters",
+      "predicted_instead": "Urban fabric"
+    },
+    {
+      "count": 37,
+      "missed": "Inland waters",
+      "predicted_instead": "Industrial or commercial units"
+    },
+    {
+      "count": 36,
+      "missed": "Arable land",
+      "predicted_instead": "Permanent crops"
+    },
+    {
+      "count": 35,
+      "missed": "Coniferous forest",
+      "predicted_instead": "Natural grassland and sparsely vegetated areas"
+    },
+    {
+      "count": 34,
+      "missed": "Inland waters",
+      "predicted_instead": "Land principally occupied by agriculture, with significant areas of natural vegetation"
+    },
+    {
+      "count": 34,
+      "missed": "Arable land",
+      "predicted_instead": "Natural grassland and sparsely vegetated areas"
+    },
+    {
+      "count": 32,
+      "missed": "Arable land",
+      "predicted_instead": "Complex cultivation patterns"
+    },
+    {
+      "count": 30,
+      "missed": "Arable land",
+      "predicted_instead": "Moors, heathland and sclerophyllous vegetation"
+    }
+  ]
+}
