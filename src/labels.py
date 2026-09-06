@@ -30,9 +30,9 @@ def load_classes(classes_path: pathlib.Path = None) -> list:
 
 def encode_labels(label_list, classes=None):
     """label_list: python list of class-name strings -> multi-hot vector (list[int]).
-    Labels not present in `classes` are silently ignored (round 3 restricts to an 8-class
-    vocabulary, but a patch's original annotation can carry other BigEarthNet labels too --
-    those are simply not a prediction target, not an error)."""
+    Labels not present in `classes` are silently ignored (the deep experiment restricts to an
+    8-class vocabulary, but a patch's original annotation can carry other BigEarthNet labels too
+    -- those are simply not a prediction target, not an error)."""
     classes = classes or load_classes()
     idx = {c: i for i, c in enumerate(classes)}
     vec = [0] * len(classes)

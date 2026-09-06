@@ -52,16 +52,16 @@ def plot_metric_vs_coverage(results_df, metric="macro_f1", out_name=None):
 
 MULTI_PALETTE = {
     "B": ("#DD8452", "B: degraded optical only"),
-    "C-early": ("#55A868", "C: early fusion (concat)"),
-    "C-late": ("#4C72B0", "C: late fusion (two-branch)"),
-    "C-fixed50": ("#8172B2", "C: early fusion, trained @ fixed 50%"),
+    "C-early": ("#55A868", "Early fusion (randomized coverage training)"),
+    "C-late": ("#4C72B0", "Late fusion (two-branch)"),
+    "C-fixed50": ("#8172B2", "Early fusion (fixed 50% coverage training)"),
 }
 
 
 def plot_multi_condition_vs_coverage(results_df, metric="macro_f1_valid", out_name=None,
                                       conditions=None, a_reference=None):
     """results_df has columns: condition (any key in MULTI_PALETTE, or 'A'), coverage, <metric>.
-    Lets round 2 plot several C variants (different fusion architectures / training regimes)
+    Lets the broad experiment plot several C configurations (different fusion architectures / training regimes)
     against B on one chart, not just a single B-vs-C pair."""
     conditions = conditions or [c for c in MULTI_PALETTE if c in set(results_df["condition"])]
     fig, ax = plt.subplots(figsize=(7, 4.6), dpi=150)

@@ -21,7 +21,7 @@ def train_model(model, train_ds, val_ds, epochs=8, lr=1e-3, batch_size=32,
     instead of the naive all-19-class macro_f1, so model selection isn't skewed by structurally
     unlearnable/untestable classes.
     classes: explicit class list matching the model's output dimension -- required whenever the
-    vocabulary isn't the default 19 (round 3's 8-class run), otherwise compute_metrics's
+    vocabulary isn't the default 19 (the deep experiment's 8-class run), otherwise compute_metrics's
     per-class F1 dict silently mismatches class names to columns.
     """
     train_loader = DataLoader(train_ds, batch_size=batch_size, shuffle=True, num_workers=num_workers)

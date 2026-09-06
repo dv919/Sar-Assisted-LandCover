@@ -1,6 +1,6 @@
 """
 Temperature scaling (Guo et al. 2017) + Expected Calibration Error (ECE) for the multi-label
-setting, extending REQUIREMENTS.md #10's "how you reason about uncertainty" beyond round 1's raw
+setting, extending REQUIREMENTS.md #10's "how you reason about uncertainty" beyond a raw
 mean-entropy proxy with a standard, quantifiable calibration metric.
 
 Multi-label extension used here: each of the 19 (sample, class) sigmoid outputs is treated as an

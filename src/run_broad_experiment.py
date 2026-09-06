@@ -1,27 +1,33 @@
 """
-Round 2: builds on run_experiment.py (round 1) with four concrete improvements driven directly
-by round-1 findings and REQUIREMENTS.md's evaluation criteria:
+The broad experiment: 19 classes, 4,200 patches (see select_subset.py / README.md sec. 2.1).
+Trains the class-balanced optical-only baseline and three SAR-fusion configurations, then
+evaluates all four across cloud-coverage levels with a scientifically-valid metric.
 
-1. **Scientifically-valid metric** (evaluate.compute_valid_class_mask): round 1's macro-F1 was
-   silently penalized by 3 classes that are structurally unlearnable/untestable in this 5-tile
-   subset ("Beaches, dunes, sands" has 0 TRAIN examples; "Marine waters" and "Coastal wetlands"
-   have 0 VAL/TEST examples) -- not a modeling failure. We now report macro_f1_valid (16 classes
-   with support in all three splits) as primary, alongside the naive macro_f1_all (19 classes)
-   for direct comparability with round 1.
+1. **Scientifically-valid metric** (evaluate.compute_valid_class_mask): a naive 19-class macro-F1
+   would be silently penalized by 3 classes that are structurally unlearnable/untestable in this
+   5-tile subset ("Beaches, dunes, sands" has 0 TRAIN examples; "Marine waters" and "Coastal
+   wetlands" have 0 VAL/TEST examples) -- not a modeling failure. macro_f1_valid (16 classes with
+   support in all three splits) is reported as primary, alongside the naive macro_f1_all (19
+   classes) for transparency.
 2. **Class-balanced loss** (class_weights.py): inverse-frequency pos_weight in BCEWithLogitsLoss,
    computed from train-split support only, targeting the real (non-structural) rare-class gap.
+   The comparison against unweighted loss (see train_baseline_unweighted.py) is reported as the
+   per-class loss-ablation figure.
 3. **A second SAR fusion architecture** (models.TwoBranchCNN): separate optical/SAR encoders with
-   late feature fusion, compared against round 1's early-concatenation fusion -- an actual
-   architecture ablation, since the case only *requires* one fusion approach.
-4. **A training-augmentation ablation**: does training condition C with mask coverage sampled
-   uniformly over [0, 75%] (round 1's choice) generalize better across eval coverage levels than
-   training at a single fixed 50%? Tested directly (C-fixed50 vs C-early, evaluated identically).
+   late feature fusion, compared against early-concatenation fusion -- an actual architecture
+   ablation, since the case only *requires* one fusion approach.
+4. **A training-coverage ablation**: does training condition C with mask coverage sampled
+   uniformly over [0, 75%] generalize better across eval coverage levels than training at a single
+   fixed 50%? Tested directly (C-fixed50 vs C-early, evaluated identically). Selection between the
+   three configurations uses validation-set performance only (see README.md sec. 7.2).
 
 Also adds **temperature-scaling calibration + Expected Calibration Error** (calibration.py) for
-the two headline models (B and the best round-2 C variant), extending round 1's raw-entropy
+the two headline models (B and the selected SAR-fusion configuration), extending the raw-entropy
 uncertainty proxy with a standard, quantifiable metric.
 
-All round-1 outputs are left untouched; round-2 outputs use a `_v2`/`v2_` suffix throughout.
+Outputs use a `_v2`/`v2_` filename prefix throughout (a legacy of this project's iterative
+development; kept as-is since many other scripts and cached artifacts already reference these
+exact names -- see README.md for what each output actually represents).
 """
 import json
 import pathlib
@@ -95,7 +101,7 @@ def main():
                           pos_weight=pos_weight, valid_class_mask=valid_mask)
 
     # ---------------- Model A2: optical-only, clean, class-weighted loss ----------------
-    print("\n=== [Round 2] Training Model A2 (optical only, clean, weighted loss) ===")
+    print("\n=== [Broad experiment] Training Model A2 (optical only, clean, weighted loss) ===")
     train_a = BENSubset(train_df, mode="optical_only", coverage=0.0)
     val_a = BENSubset(val_df, mode="optical_only", coverage=0.0)
     model_a2 = SimpleCNN(in_channels=12, num_classes=len(classes))
@@ -105,7 +111,7 @@ def main():
         json.dump(hist_a2, f, indent=2)
 
     # ---------------- Model C-early2: early concat fusion, random coverage aug, weighted loss --
-    print("\n=== [Round 2] Training Model C-early (concat fusion, coverage~U[0,0.75], weighted) ===")
+    print("\n=== [Broad experiment] Training Model C-early (concat fusion, coverage~U[0,0.75], weighted) ===")
     train_c_early = BENSubset(train_df, mode="fusion", coverage=(0.0, 0.75))
     val_c_early = BENSubset(val_df, mode="fusion", coverage=(0.0, 0.75))
     model_c_early = SimpleCNN(in_channels=14, num_classes=len(classes))
@@ -116,7 +122,7 @@ def main():
         json.dump(hist_c_early, f, indent=2)
 
     # ---------------- Model C-late: two-branch late fusion, same regime -----------------------
-    print("\n=== [Round 2] Training Model C-late (two-branch late fusion, coverage~U[0,0.75]) ===")
+    print("\n=== [Broad experiment] Training Model C-late (two-branch late fusion, coverage~U[0,0.75]) ===")
     train_c_late = BENSubset(train_df, mode="fusion", coverage=(0.0, 0.75))
     val_c_late = BENSubset(val_df, mode="fusion", coverage=(0.0, 0.75))
     model_c_late = TwoBranchCNN(optical_channels=12, sar_channels=2, num_classes=len(classes))
@@ -127,7 +133,7 @@ def main():
         json.dump(hist_c_late, f, indent=2)
 
     # ---------------- Model C-fixed50: same arch as C-early, trained at FIXED 50% coverage ----
-    print("\n=== [Round 2] Training Model C-fixed50 (concat fusion, coverage FIXED @ 50%) ===")
+    print("\n=== [Broad experiment] Training Model C-fixed50 (concat fusion, coverage FIXED @ 50%) ===")
     train_c_fixed = BENSubset(train_df, mode="fusion", coverage=0.5)
     val_c_fixed = BENSubset(val_df, mode="fusion", coverage=0.5)
     model_c_fixed50 = SimpleCNN(in_channels=14, num_classes=len(classes))
@@ -138,7 +144,7 @@ def main():
         json.dump(hist_c_fixed, f, indent=2)
 
     # ---------------- Evaluation sweep across coverage levels on TEST split -------------------
-    print("\n=== [Round 2] Evaluating A2/B/C-early/C-late/C-fixed50 across coverage levels ===")
+    print("\n=== [Broad experiment] Evaluating A2/B/C-early/C-late/C-fixed50 across coverage levels ===")
     rows = []
     per_class_by_cov = {}
     case_pool = {}  # cov -> list of per-model dicts, for qualitative figure
@@ -187,36 +193,41 @@ def main():
     a_ref_valid = results_df[results_df["condition"] == "A"]["macro_f1_valid"].iloc[0]
     a_ref_all = results_df[results_df["condition"] == "A"]["macro_f1_all"].iloc[0]
     plot_multi_condition_vs_coverage(results_df, metric="macro_f1_valid",
-                                      out_name="v2_macro_f1_valid_vs_coverage.png",
+                                      out_name="macro_f1_valid_fusion_comparison.png",
                                       conditions=["B", "C-early", "C-late", "C-fixed50"],
                                       a_reference=a_ref_valid)
     plot_multi_condition_vs_coverage(results_df, metric="macro_f1_all",
-                                      out_name="v2_macro_f1_all_vs_coverage.png",
+                                      out_name="macro_f1_all_fusion_comparison.png",
                                       conditions=["B", "C-early", "C-late", "C-fixed50"],
                                       a_reference=a_ref_all)
 
-    # ---------------- Per-class comparison: round 1 (unweighted) vs round 2 (weighted, best C) --
-    round1_pc_path = METRICS_DIR / "per_class_f1_by_coverage.json"
-    if round1_pc_path.exists():
-        with open(round1_pc_path) as f:
-            round1_pc = json.load(f)
-        r1_b = round1_pc.get("0.5", {}).get("B", {})
-        r2_b = per_class_by_cov[0.5]["B"]
-        if r1_b:
-            plot_per_class_f1(r1_b, r2_b, "50%", out_name="v2_per_class_f1_B_round1_vs_round2.png",
-                               label_b="Round 1: unweighted loss", label_c="Round 2: class-weighted loss",
+    # ---------------- Per-class comparison: unweighted-loss baseline vs class-balanced loss -----
+    # requires train_baseline_unweighted.py to have been run first (produces this file); see
+    # README.md sec. 12 for the full reproduction order.
+    unweighted_pc_path = METRICS_DIR / "per_class_f1_by_coverage.json"
+    if unweighted_pc_path.exists():
+        with open(unweighted_pc_path) as f:
+            unweighted_pc = json.load(f)
+        standard_b = unweighted_pc.get("0.5", {}).get("B", {})
+        weighted_b = per_class_by_cov[0.5]["B"]
+        if standard_b:
+            plot_per_class_f1(standard_b, weighted_b, "50%", out_name="per_class_f1_loss_ablation.png",
+                               label_b="Standard loss", label_c="Class-balanced loss",
                                color_b="#B0B0B0", color_c="#DD8452",
-                               title="Model B per-class F1 @ 50% coverage: effect of class-weighted loss",
+                               title="Effect of class-balanced loss on per-class F1 (optical-only model, 50% coverage)",
                                excluded_classes=set(excluded_classes))
+    else:
+        print(f"NOTE: {unweighted_pc_path} not found -- run train_baseline_unweighted.py first "
+              f"to also generate the class-balanced-loss ablation figure.")
 
     plot_per_class_f1(per_class_by_cov[0.5]["B"], per_class_by_cov[0.5][best_c_name], "50%",
-                       out_name="v2_per_class_f1_B_vs_bestC.png",
-                       label_b="B: degraded optical only", label_c=f"C ({best_c_name})",
-                       title=f"Per-class F1 @ 50% coverage: B vs best round-2 C ({best_c_name})",
+                       out_name="per_class_f1_broad_experiment_50pct.png",
+                       label_b="B: degraded optical only", label_c="C: degraded optical + SAR",
+                       title="Per-class F1 at 50% coverage: optical-only vs. SAR-fusion (broad experiment)",
                        excluded_classes=set(excluded_classes))
 
     # ---------------- Calibration: temperature scaling + ECE for B and best-C, at 50% coverage --
-    print(f"\n=== [Round 2] Calibration analysis (B and {best_c_name}, @ 50% coverage) ===")
+    print(f"\n=== [Broad experiment] Calibration analysis (B and {best_c_name}, @ 50% coverage) ===")
     val_ds_b = BENSubset(val_df, mode="optical_masked", coverage=0.5, seed_eval=SEED + 1)
     val_loader_b = torch.utils.data.DataLoader(val_ds_b, batch_size=BATCH_SIZE, shuffle=False)
     y_val_b, logits_val_b, _ = predict_logits(model_a2, val_loader_b, DEVICE)
@@ -249,12 +260,12 @@ def main():
 
     plot_reliability_diagram(ece_before_b["bins"], ece_after_b["bins"],
                               ece_before_b["ece"], ece_after_b["ece"],
-                              title="Model B (degraded optical only) @ 50% coverage",
-                              out_name="v2_reliability_B.png")
+                              title="Optical-only model (B) at 50% simulated cloud coverage",
+                              out_name="reliability_B.png")
     plot_reliability_diagram(ece_before_c["bins"], ece_after_c["bins"],
                               ece_before_c["ece"], ece_after_c["ece"],
-                              title=f"Model C ({best_c_name}) @ 50% coverage",
-                              out_name="v2_reliability_bestC.png")
+                              title="SAR-fusion model at 50% simulated cloud coverage",
+                              out_name="reliability_fusion.png")
 
     calibration_summary = {
         "best_c_name": best_c_name, "c_scores_mean_valid_f1_under_degradation": c_scores,
@@ -268,7 +279,7 @@ def main():
     # ---------------- Qualitative cases with the best C model @ 50% coverage ----------------
     build_case_figures_v2(case_pool[0.5], classes, test_df, best_c_name)
 
-    print("\n[Round 2] Done. See outputs/figures/v2_*.png, outputs/metrics/*_v2*, "
+    print("\n[Broad experiment] Done. See outputs/figures/v2_*.png, outputs/metrics/*_v2*, "
           "outputs/checkpoints/*_v2.pt.")
 
 
@@ -334,8 +345,8 @@ def build_case_figures_v2(cov_probs, classes, test_df, best_c_name, threshold=0.
             "correct_c": exact_correct(y_true[i], y_prob_c[i]),
         })
 
-    plot_case_grid(cases_for_fig, out_name="v2_qualitative_cases_50pct.png")
-    print(f"Saved outputs/figures/v2_qualitative_cases_50pct.png (best C = {best_c_name})")
+    plot_case_grid(cases_for_fig, out_name="qualitative_cases_broad_experiment.png")
+    print(f"Saved outputs/figures/qualitative_cases_broad_experiment.png (selected configuration = {best_c_name})")
 
 
 if __name__ == "__main__":

@@ -45,9 +45,9 @@ class BENSubset(Dataset):
 
     def __init__(self, df, mode: str, coverage=0.0, seed_eval: int | None = None,
                  classes: list = None, stats: dict = None):
-        """classes/stats: optional overrides (round 3 uses an 8-class vocabulary and its own
-        norm stats, computed from its own larger train split -- see run_experiment_v3.py).
-        Defaults to the round-1/2 19-class vocabulary and stats for backward compatibility."""
+        """classes/stats: optional overrides (the deep experiment uses an 8-class vocabulary and
+        its own norm stats, computed from its own larger train split -- see run_deep_experiment.py).
+        Defaults to the broad experiment's 19-class vocabulary and stats for backward compatibility."""
         self.df = df.reset_index(drop=True)
         self.mode = mode
         self.coverage = coverage

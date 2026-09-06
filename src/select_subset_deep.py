@@ -1,13 +1,14 @@
 """
-Round 3: fewer classes, more examples per class.
+The deep experiment's subset: fewer classes, more examples per class.
 
-Rounds 1-2 stratified a fixed 4,200-patch budget across all 19 BigEarthNet classes present in
-our 5 tiles, including some with only 29-51 total examples in the whole candidate pool -- which
-directly caused round 2's "3 structurally unlearnable/unscoreable classes" finding. This script
-instead restricts to the 8 best-supported classes (verified to have solid examples in ALL three
-splits) and takes a much larger sample from the SAME already-scanned candidate pool
-(candidate_patches.csv, 13,932 rows, same 5 tiles / S1A-only filter as rounds 1-2 -- no new tile
-selection, no new network cost beyond re-streaming the same byte range in extract_subset.py).
+The broad experiment (select_subset.py) stratified a fixed 4,200-patch budget across all 19
+BigEarthNet classes present in our 5 tiles, including some with only 29-51 total examples in the
+whole candidate pool -- which directly causes 3 classes to be structurally unlearnable/unscoreable
+(see evaluate.compute_valid_class_mask and README.md sec. 7.1). This script instead restricts to
+the 8 best-supported classes (verified to have solid examples in ALL three splits) and takes a
+much larger sample from the SAME already-scanned candidate pool (candidate_patches.csv, 13,932
+rows, same 5 tiles / S1A-only filter as the broad experiment -- no new tile selection, no new
+network cost beyond re-streaming the same byte range in extract_subset.py).
 
 These 8 classes cover 97.8% of the entire candidate pool (verified directly), so dropping to 8
 classes costs almost no data -- it just stops reserving budget for classes that were always going
@@ -45,7 +46,7 @@ def main():
 
     # restrict each patch's label vector to only the 8 target classes (other BigEarthNet labels
     # the patch may also carry are simply not a prediction target -- not dropped, not treated as
-    # negative evidence, just outside this round's scope; see labels.encode_labels)
+    # negative evidence, just outside this experiment's scope; see labels.encode_labels)
     filtered["labels"] = labs[has_top].apply(lambda l: json.dumps([c for c in l if c in TOP8_CLASSES]))
 
     split_counts = filtered["split"].value_counts()
@@ -68,7 +69,7 @@ def main():
     with open(DATA_DIR / "classes_v3.json", "w") as f:
         json.dump(TOP8_CLASSES, f, indent=2)
 
-    # per-class counts in the final v3 subset, per split -- the whole point of this round
+    # per-class counts in the final deep-experiment subset, per split -- the whole point of this design
     report = {}
     for split_name in ["train", "validation", "test"]:
         sub = subset[subset["split"] == split_name]

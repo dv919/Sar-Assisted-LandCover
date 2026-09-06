@@ -1,9 +1,9 @@
 """
-Round 2.5: "which classes confuse each other" -- named explicitly in REQUIREMENTS.md's own
-uncertainty-reasoning ask (§10) but not previously built (per-class F1 shows *that* a class is
-missed, not *what the model said instead*). No retraining needed: loads the already-trained
-round-2 checkpoints (model_a_v2, model_c_fixed50_v2 -- the round-2 headline B/C pair) and runs
-inference at 50% coverage on the test split.
+"Which classes confuse each other" -- named explicitly in REQUIREMENTS.md's own
+uncertainty-reasoning ask (§10) but not answered by per-class F1 alone (it shows *that* a class is
+missed, not *what the model said instead*). No retraining needed: loads the broad experiment's
+already-trained checkpoints (model_a_v2, model_c_fixed50_v2 -- the optical-only baseline and the
+selected SAR-fusion configuration) and runs inference at 50% coverage on the test split.
 
 Confusion definition used (multi-label, so a standard single-label confusion matrix doesn't
 apply): for every sample and every true class i the model MISSES (false negative), count every

@@ -44,8 +44,8 @@ def compute_metrics(y_true: np.ndarray, y_prob: np.ndarray, threshold: float = 0
     learned (0 train support) or can't be scored meaningfully (0 eval-split support), and folding
     them into a naive macro average penalizes the model for something no model could fix. The
     naive all-class numbers are still returned (as *_all) for transparency/comparability.
-    classes: optional explicit class list (defaults to the round-1/2 19-class vocabulary via
-    load_classes() -- round 3 passes its own 8-class list here).
+    classes: optional explicit class list (defaults to the broad experiment's 19-class vocabulary
+    via load_classes() -- the deep experiment passes its own 8-class list here).
     """
     y_pred = (y_prob >= threshold).astype(int)
     classes = classes if classes is not None else load_classes()
@@ -74,7 +74,7 @@ def compute_metrics(y_true: np.ndarray, y_prob: np.ndarray, threshold: float = 0
         "mean_entropy": mean_entropy,
         "per_class_f1": {c: f for c, f in zip(classes, per_class_f1)},
     }
-    # backward-compat alias used by round-1 code/plots
+    # convenience alias used by some earlier plotting code
     result["macro_f1"] = result["macro_f1_all"]
 
     if valid_class_mask is not None:

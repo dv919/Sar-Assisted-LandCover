@@ -438,16 +438,21 @@ python src/download_metadata.py                       # ~4.3 MB
 python src/select_subset.py                            # broad-experiment selection (19 classes)
 python src/extract_subset.py                            # streams ~1.8 GB from Zenodo
 python src/preprocess.py                                 # cached tensors + norm stats
-python src/run_experiment_v2.py                          # broad experiment: trains & evaluates
-python src/confusion_analysis.py                         # class-confusion matrices (no retraining)
+python src/train_baseline_unweighted.py                  # unweighted-loss baseline (for the loss-ablation figure)
+python src/run_broad_experiment.py                        # broad experiment: trains & evaluates
+python src/confusion_analysis.py                          # class-confusion matrices (no retraining)
 
-python src/select_subset_v3.py                           # deep-experiment selection (8 classes)
+python src/select_subset_deep.py                         # deep-experiment selection (8 classes)
 python src/extract_subset.py subset_patches_v3.csv       # 2nd pass, same tiles, ~1.8 GB
 python src/preprocess.py subset_patches_v3.csv _v3       # cache + norm stats for deep experiment
-python src/run_experiment_v3.py                          # deep experiment + cross-experiment comparison
+python src/run_deep_experiment.py                         # deep experiment + cross-experiment comparison
 
 python src/regenerate_final_figures.py                    # calibration/entropy figures (no retraining)
 ```
+
+Note: `train_baseline_unweighted.py` must run before `run_broad_experiment.py` for the
+class-balanced-loss ablation figure (§6.1) to be generated — `run_broad_experiment.py` checks for
+its output file and prints a note if it's missing rather than failing.
 
 ## Project layout
 

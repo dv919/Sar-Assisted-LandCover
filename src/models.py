@@ -46,9 +46,9 @@ def build_model(in_channels: int, num_classes: int) -> nn.Module:
 
 class TwoBranchCNN(nn.Module):
     """
-    Second SAR-assisted fusion pattern (round 2), for an actual architecture comparison against
-    the early-concatenation SimpleCNN(14ch) used in round 1: separate small optical and SAR
-    encoders, each pooled to its own feature vector, concatenated, then a shared classifier head
+    A second SAR-assisted fusion pattern, for an actual architecture comparison against the
+    early-concatenation SimpleCNN(14ch) baseline: separate small optical and SAR encoders, each
+    pooled to its own feature vector, concatenated, then a shared classifier head
     -- the "separate SAR and optical encoders followed by feature fusion" pattern explicitly
     listed as an acceptable option in REQUIREMENTS.md #6.
 
@@ -71,7 +71,7 @@ class TwoBranchCNN(nn.Module):
                 nn.MaxPool2d(2),
             )
 
-        # optical branch: same depth as the round-1 backbone (optical carries most of the signal)
+        # optical branch: same depth as the SimpleCNN backbone (optical carries most of the signal)
         self.optical_enc = nn.Sequential(
             block(optical_channels, 32), block(32, 64), block(64, 128), block(128, feat_dim),
         )
