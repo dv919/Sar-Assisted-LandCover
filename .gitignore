@@ -23,3 +23,11 @@ Code_Data_Masking_Walkthrough.pdf
 Case study - SAR-Assisted.pdf
 Project_Reference_Report.pdf
 REQUIREMENTS.md
+
+# Colab demo/run materials -- personal working files for running and presenting this project,
+# not part of the published repository.
+colab_quickstart.html
+Colab_Quickstart_Guide.pdf
+demo_guide.html
+Technical_Review_Demo_Guide.pdf
+SAR_Colab_FullRun.ipynb
