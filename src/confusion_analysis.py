@@ -35,6 +35,7 @@ FIG_DIR = ROOT / "outputs" / "figures"
 METRICS_DIR = ROOT / "outputs" / "metrics"
 SEED = 42
 COVERAGE = 0.5
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 
 def confusion_matrix_multilabel(y_true, y_pred, classes, valid_idx):
@@ -88,17 +89,19 @@ def main():
 
     model_a = SimpleCNN(in_channels=12, num_classes=len(classes))
     model_a.load_state_dict(torch.load(CKPT_DIR / "model_a_v2.pt", map_location="cpu"))
+    model_a = model_a.to(DEVICE)
     model_c = SimpleCNN(in_channels=14, num_classes=len(classes))
     model_c.load_state_dict(torch.load(CKPT_DIR / "model_c_fixed50_v2.pt", map_location="cpu"))
+    model_c = model_c.to(DEVICE)
 
     ds_b = BENSubset(test_df, mode="optical_masked", coverage=COVERAGE, seed_eval=SEED)
     loader_b = torch.utils.data.DataLoader(ds_b, batch_size=32, shuffle=False)
-    y_true_b, y_prob_b, ids_b = predict(model_a, loader_b, "cpu")
+    y_true_b, y_prob_b, ids_b = predict(model_a, loader_b, DEVICE)
     y_pred_b = (y_prob_b >= 0.5).astype(int)
 
     ds_c = BENSubset(test_df, mode="fusion", coverage=COVERAGE, seed_eval=SEED)
     loader_c = torch.utils.data.DataLoader(ds_c, batch_size=32, shuffle=False)
-    y_true_c, y_prob_c, ids_c = predict(model_c, loader_c, "cpu")
+    y_true_c, y_prob_c, ids_c = predict(model_c, loader_c, DEVICE)
     y_pred_c = (y_prob_c >= 0.5).astype(int)
     assert ids_b == ids_c
 

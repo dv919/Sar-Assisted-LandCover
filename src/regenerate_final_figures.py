@@ -43,8 +43,10 @@ def regenerate_reliability_diagrams():
 
     model_b = SimpleCNN(in_channels=12, num_classes=len(classes))
     model_b.load_state_dict(torch.load(CKPT_DIR / "model_a_v2.pt", map_location="cpu"))
+    model_b = model_b.to(DEVICE)
     model_c = SimpleCNN(in_channels=14, num_classes=len(classes))
     model_c.load_state_dict(torch.load(CKPT_DIR / "model_c_fixed50_v2.pt", map_location="cpu"))
+    model_c = model_c.to(DEVICE)
 
     val_ds_b = BENSubset(val_df, mode="optical_masked", coverage=0.5, seed_eval=SEED + 1)
     y_val_b, logits_val_b, _ = predict_logits(model_b, torch.utils.data.DataLoader(val_ds_b, batch_size=BATCH_SIZE), DEVICE)

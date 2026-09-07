@@ -149,8 +149,10 @@ def cross_compare(test_df_deep, classes8, valid_mask8, model_b_deep, model_c_dee
 
     model_b_broad = SimpleCNN(in_channels=12, num_classes=len(classes19))
     model_b_broad.load_state_dict(torch.load(CKPT_DIR / "model_a_v2.pt", map_location="cpu"))
+    model_b_broad = model_b_broad.to(DEVICE)
     model_c_broad = SimpleCNN(in_channels=14, num_classes=len(classes19))
     model_c_broad.load_state_dict(torch.load(CKPT_DIR / "model_c_fixed50_v2.pt", map_location="cpu"))
+    model_c_broad = model_c_broad.to(DEVICE)
 
     rows = []
     for cov in COVERAGE_LEVELS:
