@@ -26,7 +26,7 @@ CKPT_DIR = ROOT / "outputs" / "checkpoints"
 METRICS_DIR = ROOT / "outputs" / "metrics"
 SEED = 42
 BATCH_SIZE = 32
-DEVICE = "cpu"
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 
 def get_splits():

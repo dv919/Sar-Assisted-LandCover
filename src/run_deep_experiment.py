@@ -45,7 +45,7 @@ COVERAGE_LEVELS = [0.0, 0.25, 0.5, 0.75]
 EPOCHS = 10
 BATCH_SIZE = 32
 SEED = 42
-DEVICE = "cpu"
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 
 def get_deep_experiment_splits():
